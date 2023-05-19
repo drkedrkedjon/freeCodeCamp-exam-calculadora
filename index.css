@@ -1,4 +1,67 @@
 body {
   background-color: black;
   color: aliceblue;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  /* align-items: strech; */
+  max-width: 360px;
+  margin: 4rem auto;
+  background-color: rebeccapurple;
+  border-radius: 20px;
+  padding: 2rem 2rem;
+  text-align: center;
+}
+.controls {
+  display: flex;
+  justify-content: space-between;
+}
+.mini-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+h1 {
+  font-size: 3rem;
+  margin: 0;
+}
+#session-label,
+#break-label {
+  font-size: 1.2rem;
+  margin: 0;
+}
+button {
+  width: 50px;
+  border: none;
+  padding: 5px;
+  margin-inline: 5px;
+  border-radius: 5px;
+  background-color: bisque;
+  cursor: pointer;
+}
+button:hover {
+  background-color: aqua;
+}
+.display {
+  border: 2px solid pink;
+  padding: 2rem;
+  border-radius: 10px;
+}
+h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+#time-left {
+  font-size: 5.5rem;
+  margin-block: 20px;
+  font-weight: 900;
+}
+#session-length,
+#break-length {
+  min-width: 35px;
+  font-size: 1.6rem;
+  margin: none;
 }
