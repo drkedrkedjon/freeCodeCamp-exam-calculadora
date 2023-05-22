@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import beep from "./beep.wav";
 
 function App() {
   const [breakLength, setBreakLength] = useState(5);
@@ -7,6 +8,10 @@ function App() {
   const [isStartClock, setIsStartClock] = useState(true);
   const [timerLabel, setTimerLabel] = useState("Session");
   const [isBreak, setIsBreak] = useState(false);
+
+  const interval = useRef(null);
+  const sessionLengthSeconds = useRef(sessionLength * 60);
+  const audioRef = useRef(beep);
 
   function handleResetClock() {
     setBreakLength(5);
@@ -17,6 +22,8 @@ function App() {
     setIsBreak(false);
     clearInterval(interval.current);
     setIsStartClock(true);
+    audioRef.current.pause();
+    audioRef.current.currentTime = 0;
   }
   function handleClockLengths(e) {
     let sesLong = sessionLength;
@@ -52,12 +59,7 @@ function App() {
         break;
     }
   }
-
-  const interval = useRef(null);
-  const sessionLengthSeconds = useRef(sessionLength * 60);
-
   function startClock() {
-    // sessionLengthSeconds.current = sessionLength * 60;
     sessionLengthSeconds.current -= 1;
 
     let isBreakTrue = isBreak;
@@ -71,11 +73,11 @@ function App() {
       sessionLengthSeconds.current -= 1;
 
       if (sessionLengthSeconds.current < 0 && !isBreakTrue) {
+        audioRef.current.play();
         setTimerLabel("Break");
         setIsBreak(true);
         sessionLengthSeconds.current = breakLength * 60;
         isBreakTrue = true;
-        // console.log("cAmbio a break");
       }
 
       if (sessionLengthSeconds.current < 0 && isBreakTrue) {
@@ -83,18 +85,15 @@ function App() {
         setIsBreak(false);
         sessionLengthSeconds.current = sessionLength * 60;
         isBreakTrue = false;
-        // console.log("cAmbio a Session");
       }
     }, 1000);
     setIsStartClock(false);
   }
-
   function stopClock() {
     sessionLengthSeconds.current -= 1;
     clearInterval(interval.current);
     setIsStartClock(true);
   }
-
   return (
     <main className="container">
       <h1>25 + 5 Clock</h1>
@@ -145,8 +144,8 @@ function App() {
           </button>
         </div>
       </div>
+      <audio ref={audioRef} id="beep" src={beep}></audio>
     </main>
   );
 }
-
 export default App;
