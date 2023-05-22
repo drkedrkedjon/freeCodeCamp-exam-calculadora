@@ -1,23 +1,28 @@
 import { useRef, useState } from "react";
 
 function App() {
-  const [breakLength, setBreakLength] = useState(1);
-  const [sessionLength, setSessionLength] = useState(1);
+  const [breakLength, setBreakLength] = useState(5);
+  const [sessionLength, setSessionLength] = useState(25);
   const [timeLeft, setTimeLeft] = useState("25:00");
   const [isStartClock, setIsStartClock] = useState(true);
   const [timerLabel, setTimerLabel] = useState("Session");
   const [isBreak, setIsBreak] = useState(false);
-  // console.log(isBreak);
 
   function handleResetClock() {
-    setBreakLength(1);
-    setSessionLength(1);
+    setBreakLength(5);
+    setSessionLength(25);
     setTimeLeft("25:00");
     sessionLengthSeconds.current = sessionLength * 60;
     setTimerLabel("Session");
     setIsBreak(false);
+    clearInterval(interval.current);
+    setIsStartClock(true);
   }
   function handleClockLengths(e) {
+    let sesLong = sessionLength;
+    const sesLongDecrement = sesLong <= 1 ? sesLong : sesLong - 1;
+    const sesLongIncrement = sesLong >= 60 ? sesLong : sesLong + 1;
+
     switch (e.target.id) {
       case "break-decrement":
         setBreakLength((oldValue) =>
@@ -30,27 +35,38 @@ function App() {
         );
         break;
       case "session-decrement":
-        setSessionLength((oldValue) =>
-          oldValue <= 1 ? oldValue : (oldValue -= 1)
+        setSessionLength(sesLongDecrement);
+        setTimeLeft(
+          sesLongDecrement < 10
+            ? `0${sesLongDecrement}:00`
+            : `${sesLongDecrement}:00`
         );
         break;
       case "session-increment":
-        setSessionLength((oldValue) =>
-          oldValue >= 60 ? oldValue : (oldValue += 1)
+        setSessionLength(sesLongIncrement);
+        setTimeLeft(
+          sesLongIncrement < 10
+            ? `0${sesLongIncrement}:00`
+            : `${sesLongIncrement}:00`
         );
         break;
     }
   }
 
   const interval = useRef(null);
-  const sessionLengthSeconds = useRef(null);
+  const sessionLengthSeconds = useRef(sessionLength * 60);
+
   function startClock() {
-    sessionLengthSeconds.current = sessionLength * 60;
+    // sessionLengthSeconds.current = sessionLength * 60;
+    sessionLengthSeconds.current -= 1;
+
     let isBreakTrue = isBreak;
 
     interval.current = setInterval(function () {
       let min = Math.floor(sessionLengthSeconds.current / 60);
       let sec = sessionLengthSeconds.current % 60;
+      if (min < 10) min = `0${min}`;
+      if (sec < 10) sec = `0${sec}`;
       setTimeLeft(min + ":" + sec);
       sessionLengthSeconds.current -= 1;
 
@@ -59,7 +75,7 @@ function App() {
         setIsBreak(true);
         sessionLengthSeconds.current = breakLength * 60;
         isBreakTrue = true;
-        console.log("cAmbio a break");
+        // console.log("cAmbio a break");
       }
 
       if (sessionLengthSeconds.current < 0 && isBreakTrue) {
@@ -67,13 +83,14 @@ function App() {
         setIsBreak(false);
         sessionLengthSeconds.current = sessionLength * 60;
         isBreakTrue = false;
-        console.log("cAmbio a Session");
+        // console.log("cAmbio a Session");
       }
     }, 1000);
     setIsStartClock(false);
   }
 
   function stopClock() {
+    sessionLengthSeconds.current -= 1;
     clearInterval(interval.current);
     setIsStartClock(true);
   }
