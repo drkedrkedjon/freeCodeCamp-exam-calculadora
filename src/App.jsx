@@ -43,6 +43,7 @@ function App() {
         break;
       case "session-decrement":
         setSessionLength(sesLongDecrement);
+        sessionLengthSeconds.current = sesLongDecrement * 60;
         setTimeLeft(
           sesLongDecrement < 10
             ? `0${sesLongDecrement}:00`
@@ -51,6 +52,7 @@ function App() {
         break;
       case "session-increment":
         setSessionLength(sesLongIncrement);
+        sessionLengthSeconds.current = sesLongIncrement * 60;
         setTimeLeft(
           sesLongIncrement < 10
             ? `0${sesLongIncrement}:00`
@@ -72,8 +74,9 @@ function App() {
       setTimeLeft(min + ":" + sec);
       sessionLengthSeconds.current -= 1;
 
+      if (sessionLengthSeconds.current < 0) audioRef.current.play();
+
       if (sessionLengthSeconds.current < 0 && !isBreakTrue) {
-        audioRef.current.play();
         setTimerLabel("Break");
         setIsBreak(true);
         sessionLengthSeconds.current = breakLength * 60;
@@ -90,7 +93,7 @@ function App() {
     setIsStartClock(false);
   }
   function stopClock() {
-    sessionLengthSeconds.current -= 1;
+    // sessionLengthSeconds.current -= 1;
     clearInterval(interval.current);
     setIsStartClock(true);
   }
@@ -144,7 +147,7 @@ function App() {
           </button>
         </div>
       </div>
-      <audio ref={audioRef} id="beep" src={beep}></audio>
+      <audio ref={audioRef} id="beep" src={beep} type="audio/wav"></audio>
     </main>
   );
 }
